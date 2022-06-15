@@ -1,18 +1,9 @@
 import { useState } from 'react'
 
-const Button = ({ onClick, text }) => {
-
-  return (
-    <button onClick={onClick}>
-      {text}
-    </button>
-  )
-
-}
-
+const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
+ 
 const MaxDisplay = ({ votes, anec }) => {
-
-  //  find the max value in the array, and its index
+//  find the max value in the array, and its index
   let max = votes.reduce(function (a, b) {
     return Math.max(a, b);
   });
@@ -20,13 +11,10 @@ const MaxDisplay = ({ votes, anec }) => {
 
   console.log(`max is ${max}`)
   console.log(`max anac is ${maxIndex}`)
+  
   return (
-
-    <div>{anec[maxIndex]} <p>
-    </p>has {votes[maxIndex]} votes
-    </div>
+    <div>{anec[maxIndex]} <p> has {votes[maxIndex]} votes</p></div>
   )
-
 }
 
 const App = () => {
@@ -39,37 +27,28 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients'
   ]
-
+  //keep track of the selection and of the votes per each anecdote
   const [selected, setSelected] = useState(0)
   const [vote, setVote] = useState(new Array(anecdotes.length).fill(0))
 
   console.log(`current votes: ${vote}`)
   //update the selected anecdote using the setSelected function
   //pass a random selection, take the length of the array in consideration
-
   let rand
   const handleNextAnecdote = () => {
     rand = Math.floor(Math.random() * anecdotes.length)
-
-    setSelected(rand)
+   setSelected(rand)
   }
-
   //handle votes, increase the votes on click of button
   const handleVote = () => {
     //make copy of the array
     let arr = [...vote]
-
-
-    //vote goes to the current anecdote -> current random value
+   //vote goes to the current anecdote
     arr[selected]++
     setVote(arr)
-
-  }
-
+}
+  
   let currentAnecdote = rand
-
-
-
 
   return (
     <div>
@@ -82,9 +61,7 @@ const App = () => {
 
       <h1>Anecdote with most votes</h1>
       <MaxDisplay votes={vote} anec={anecdotes} />
-
-
-    </div>
+   </div>
   )
 }
 
