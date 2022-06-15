@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
-const Button = ({ onClick }) => {
+const Button = ({onClick,text}) => {
 
   return (
     <button onClick={onClick}>
-      Next anecdote
+      {text}
     </button>
   )
 
@@ -21,22 +21,42 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients'
   ]
 
-  const [selected, setSelected] = useState(0)
+ const [selected, setSelected] = useState(0)
+ const [vote, setVote] = useState(new Array(anecdotes.length).fill(0))
 
-  //upadte the selected anecdote using the setSelected function
+ console.log(`current votes: ${vote}`)
+  //update the selected anecdote using the setSelected function
   //pass a random selection, take the length of the array in consideration
 
-  let rand = Math.floor(Math.random() * anecdotes.length)
-  console.log(rand)
+  let rand = Math.floor(Math.random() * anecdotes.length) 
+  console.log(`Current anecdote: ${selected}\n Random value: ${rand}`)
   const handleNextAnecdote = () => {
 
     setSelected(rand)
   }
+  
+
+  //handle votes, increase the votes on click of button
+  const handleVote = () => {
+    //make copy of the array
+    let arr = [...vote]
+ 
+
+    //vote goes to the current anecdote -> current random value
+    arr[selected]++
+    setVote(arr)
+   
+  }
+
+  let currentAnecdote = rand
 
   return (
     <div>
       {anecdotes[selected]}
-      <div> <Button onClick={handleNextAnecdote} /></div>
+      <div>
+      <Button onClick={handleVote}  text = "Vote"/> 
+      <Button onClick={handleNextAnecdote}  text = "Next anecdote"/>
+        </div>
 
     </div>
   )
