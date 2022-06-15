@@ -11,16 +11,7 @@ const Button = ({ onClick, text }) => {
   )
 }
 
-const Display = ({ score, text }) => {
-   
-  return (
-    <div>
-      {text} : {score}
-    </div>
-  )
-}
-
-const DisplayAll = (props) => {
+const Statistics = (props) => {
 
  
   //average: (good - bad) / total
@@ -33,6 +24,9 @@ console.log(average)
 
   return (
     <div>
+      <div>Good : {props.scores[0]}</div>
+      <div>Neutral : {props.scores[1]}</div>
+      <div>Bad : {props.scores[2]}</div>
       <div>All: {props.scores[0] + props.scores[1] + props.scores[2]}</div>
       <div>Average: {average}</div>
       <div>Positive: {((props.scores[0]/total) * 100)} % </div>
@@ -40,7 +34,9 @@ console.log(average)
    
   )
 
-}//total 
+}
+
+//total 
 let total = 0
 const App = () => {
   // save clicks of each button to its own state
@@ -80,16 +76,9 @@ const App = () => {
 
       <Button onClick={handleBadClick}
         text="Bad" />
-
       <div>
         <h2>Statistics </h2>
-        <Display score={good}
-          text='Good' />
-        <Display score={neutral}
-          text='Neutral' />
-        <Display score={bad}
-          text='Bad' />
-         <DisplayAll  scores  = {[good, neutral , bad]} 
+         <Statistics  scores  = {[good, neutral , bad]} 
          total = {total}/> 
       </div>
     </div>
