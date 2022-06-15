@@ -15,7 +15,12 @@ const StatisticsLine = (props) => {
 
   //text and value, e,.g Good 1
   return (
-    <div> {props.text}  {props.value}</div>
+    //JSX expressions must have one parent element. Wrap in JSX fragment
+    <><td>{props.text}</td><td>{props.value}</td></>
+
+
+
+    //table ??  
   )
 }
 //Statistics scores={[good, neutral, bad]} total={total}
@@ -34,14 +39,16 @@ const Statistics = (props) => {
 
   if (!isNaN((average))) {
     return (
-      <div>
-        <StatisticsLine text="Good" value={props.scores[0]} />
-        <StatisticsLine text="Neutral" value={props.scores[1]} />
-        <StatisticsLine text="Bad" value={props.scores[2]} />
-        <StatisticsLine text="All" value={props.scores[0] + props.scores[1] + props.scores[2]} />
-        <StatisticsLine text="Average" value={average} />
-        <StatisticsLine text="Positive" value={positive} />
-      </div>
+      <table>
+        <tbody>
+          <tr><StatisticsLine text="Good" value={props.scores[0]} /></tr>
+          <tr><StatisticsLine text="Neutral" value={props.scores[1]} /></tr>
+          <tr><StatisticsLine text="Bad" value={props.scores[2]} /></tr>
+          <tr><StatisticsLine text="All" value={props.scores[0] + props.scores[1] + props.scores[2]} /></tr>
+          <tr><StatisticsLine text="Average" value={average} /></tr>
+          <tr><StatisticsLine text="Positive" value={positive} /></tr>
+        </tbody>
+      </table>
 
     )
   }
