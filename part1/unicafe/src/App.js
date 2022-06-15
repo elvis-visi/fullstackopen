@@ -16,12 +16,16 @@ const Statistics = (props) => {
  
   //average: (good - bad) / total
   let average = ((props.scores[0] - props.scores[2])/props.total) 
+
+  
  
 //good +1 score, neutral= 0, bad = -1
 //positive, good over total
 
 console.log(average)
 
+if(!isNaN((average)))
+{
   return (
     <div>
       <div>Good : {props.scores[0]}</div>
@@ -33,6 +37,21 @@ console.log(average)
    </div>
    
   )
+}
+
+
+
+  return(
+    <div>
+      No feedback given
+    </div>
+
+  )
+
+  
+
+
+ 
 
 }
 
