@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-const Display = ({ name }) => {
+const Display = ({ name, number }) => {
 
   return (
-    <p> {name} </p>
+    <p> {name} {number}</p>
   )
 }
 
@@ -11,14 +11,18 @@ const App = () => {
 
   //persons -> where we will store the names of the phonebook
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas'}
+    { name: 'Arto Hellas',
+  number:'123-4566'}
   ])
   console.log("persons", persons);
 
   //newName to control the form input element
   //we wil set it as the input element's value attribute:
   const [newName, setNewName] = useState('')
-  console.group("new name", newName)
+  console.log("new name", newName)
+
+  const[newNumber, setNewNumber] = useState('')
+  console.log('new number', newNumber)
 
   //event parameter is the event that triggers the call to the event handler
   //function
@@ -28,7 +32,8 @@ const App = () => {
 
     //add new note
     const personObject = {
-      name: newName
+      name: newName,
+      number: newNumber
     }
 
     //if personObjec is already in the array, alert()
@@ -37,9 +42,10 @@ const App = () => {
     {
         if( JSON.stringify(personObject) == JSON.stringify(persons[i]))
         {
-           alert(`${newName} is already added to phonebook`)
+           alert(`${newName} - ${newNumber} is already added to phonebook`)
            isDuplicate = true
            setNewName('')
+           setNewNumber('')
            break
         }
     }
@@ -48,6 +54,7 @@ const App = () => {
     {
       setPersons(persons.concat(personObject))
       setNewName('')
+      setNewNumber('')
     }
 
   }
@@ -63,6 +70,11 @@ const App = () => {
     setNewName(event.target.value) //update the state of newName
   }
 
+  const handleNumberChange = (event) => {
+    console.log("event target value", event.target.value)
+    setNewNumber(event.target.value) 
+  }
+
   return (
 
     <div>
@@ -73,6 +85,10 @@ const App = () => {
             onChange={handleNameChange} />
         </div>
         <div>
+          number <input value={newNumber}
+          onChange={handleNumberChange}/>
+        </div>
+        <div>
           <button type="submit"
           >add</button>
         </div>
@@ -80,8 +96,8 @@ const App = () => {
       <h2>Numbers</h2>
 
 
-      {persons.map(name =>
-        <Display name={name.name} />
+      {persons.map(per =>
+        <Display name={per.name} number={per.number} />
 
       )}
 
