@@ -31,8 +31,25 @@ const App = () => {
       name: newName
     }
 
-    setPersons(persons.concat(personObject))
-    setNewName('')
+    //if personObjec is already in the array, alert()
+    let isDuplicate = false
+    for(let i = 0; i< persons.length; i++)
+    {
+        if( JSON.stringify(personObject) == JSON.stringify(persons[i]))
+        {
+           alert(`${newName} is already added to phonebook`)
+           isDuplicate = true
+           setNewName('')
+           break
+        }
+    }
+  
+    if(!isDuplicate)
+    {
+      setPersons(persons.concat(personObject))
+      setNewName('')
+    }
+
   }
 
   //handle Name change, event.target -> form; event.target.value -> the value
