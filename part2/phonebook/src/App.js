@@ -94,6 +94,14 @@ const App = () => {
     }
 
     if (!isDuplicate) {
+      
+      axios
+      .post('http://localhost:3001/persons', personObject)
+      .then(respone => {
+        setPersons(persons.concat(respone.data))
+      })
+      
+      
       setPersons(persons.concat(personObject))
       setNewName('')
       setNewNumber('')
