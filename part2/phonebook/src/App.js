@@ -6,6 +6,21 @@ import axios from 'axios'
 
 import personService from './services/persons'
 
+
+const Notification = ({ message }) => {
+  //if null nothing gets rendered to the screen
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='message'>
+      {message}
+    </div>
+  )
+}
+
+
 const App = () => {
 
 
@@ -18,6 +33,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   //search field
   const [filterByName, setNewFilter] = useState('')
+
+  const [message, setMessage] = useState('')
 
 
 
@@ -76,39 +93,43 @@ const App = () => {
         break
       }
       //if only the name is the same
-      if(personObject.name === persons[i].name)
-      {
+      else if (personObject.name === persons[i].name) {
+
 
         isDuplicate = true
-        if(window.confirm(`${persons[i].name} is already in the phonebook
-        ,replace the old number with the new one?`))
-
-        {
+        if (window.confirm(`${persons[i].name} is already in the phonebook
+        ,replace the old number with the new one?`)) {
           window.open("Number updated")
-   //update
-   const idPer = persons[i].id
-   const url = `http://localhost:3001/persons/${idPer}`
-   const person = persons.find(n => n.id === idPer)
+          //update
+          const idPer = persons[i].id
+          const url = `http://localhost:3001/persons/${idPer}`
+          const person = persons.find(n => n.id === idPer)
 
-   const numberChange = {...person, number: personObject.number}
+          const numberChange = { ...person, number: personObject.number }
 
-   axios.put(url, numberChange)
-   .then(response => {
-     setPersons(persons.map(per => per.id !== idPer ? per : response.data))
-   
+          axios.put(url, numberChange)
+            .then(response => {
+              setPersons(persons.map(per => per.id !== idPer ? per : response.data))
+            })
 
-   })
+          setMessage(` Number ${personObject.number} added`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 4000)
+
+
+
 
         }
-     
+
 
       }
     }
 
     if (!isDuplicate) {
-      
+
       //if name is the same, but number is not, then update the number
-//create service 
+      //create service 
       personService
         .create(personObject)
         .then(returnedPerson => {
@@ -118,6 +139,10 @@ const App = () => {
       setPersons(persons.concat(personObject))
       setNewName('')
       setNewNumber('')
+      setMessage(` ${personObject.name} added`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
     }
 
   }
@@ -163,7 +188,8 @@ const App = () => {
   return (
 
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={message} />
       <Filter filterByName={filterByName}
         handleNameFilter={handleNameFilter} />
 
@@ -173,7 +199,7 @@ const App = () => {
         newNumber={newNumber}
         handleNumberChange={handleNumberChange}
       />
-      <h2>Numbers</h2>
+      <h1>Numbers</h1>
 
 
       {phoneBookToShow.map(per =>
