@@ -4,6 +4,8 @@ import Filter from './components/Filter'
 import Display from './components/Display'
 import axios from 'axios'
 
+import personService from './services/persons'
+
 const App = () => {
 
  
@@ -40,15 +42,13 @@ const App = () => {
 
   //fetch persons users
   useEffect(() => {
-
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
-
+    //fetch the data from db.json and set the person array 
+    personService
+    .getAll()
+    .then(intialNotes => {
+      setPersons(intialNotes)
+    })
+  
   }, [])
   console.log('render', persons.length, 'notes')
 
@@ -94,11 +94,11 @@ const App = () => {
     }
 
     if (!isDuplicate) {
-      
-      axios
-      .post('http://localhost:3001/persons', personObject)
-      .then(respone => {
-        setPersons(persons.concat(respone.data))
+      //create service 
+      personService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
       })
       
       
