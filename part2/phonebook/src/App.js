@@ -111,6 +111,12 @@ const App = () => {
             .then(response => {
               setPersons(persons.map(per => per.id !== idPer ? per : response.data))
             })
+            .catch(error => {
+              alert(
+  
+           `the note '${persons[i].name}' was already deleted from server`
+              )
+            })
 
           setMessage(` Number ${personObject.number} added`)
           setTimeout(() => {
