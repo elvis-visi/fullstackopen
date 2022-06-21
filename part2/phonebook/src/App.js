@@ -8,10 +8,10 @@ import personService from './services/persons'
 
 const App = () => {
 
- 
 
- //persons -> where we will store the names of the phonebook
-  const[persons, setPersons] = useState([])
+
+  //persons -> where we will store the names of the phonebook
+  const [persons, setPersons] = useState([])
   //newName to control the form input element
   //we wil set it as the input element's value attribute:
   const [newName, setNewName] = useState('')
@@ -44,11 +44,11 @@ const App = () => {
   useEffect(() => {
     //fetch the data from db.json and set the person array 
     personService
-    .getAll()
-    .then(intialNotes => {
-      setPersons(intialNotes)
-    })
-  
+      .getAll()
+      .then(intialNotes => {
+        setPersons(intialNotes)
+      })
+
   }, [])
   console.log('render', persons.length, 'notes')
 
@@ -57,25 +57,17 @@ const App = () => {
 
 
   const addPerson = (event) => {
-    console.group("event", event.target) //the form
     event.preventDefault() //prevent default action of submitting HTML forms
-
-
     //add new note
     const personObject = {
       name: newName,
       number: newNumber,
     }
-
     //if personObjec is already in the array, alert()
     let isDuplicate = false
-
-  
-
     for (let i = 0; i < persons.length; i++) {
       const obj = personObject.name + personObject.number
       //
-
       if (JSON.stringify(obj) === JSON.stringify(persons[i])) {
         alert(`${newName} - ${newNumber} is already added to phonebook`)
         isDuplicate = true
@@ -83,17 +75,46 @@ const App = () => {
         setNewNumber('')
         break
       }
+      //if only the name is the same
+      if(personObject.name === persons[i].name)
+      {
+
+        isDuplicate = true
+        if(window.confirm(`${persons[i].name} is already in the phonebook
+        ,replace the old number with the new one?`))
+
+        {
+          window.open("Number updated")
+   //update
+   const idPer = persons[i].id
+   const url = `http://localhost:3001/persons/${idPer}`
+   const person = persons.find(n => n.id === idPer)
+
+   const numberChange = {...person, number: personObject.number}
+
+   axios.put(url, numberChange)
+   .then(response => {
+     setPersons(persons.map(per => per.id !== idPer ? per : response.data))
+   
+
+   })
+
+        }
+     
+
+      }
     }
 
     if (!isDuplicate) {
-      //create service 
+      
+      //if name is the same, but number is not, then update the number
+//create service 
       personService
-      .create(personObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-      })
-      
-      
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+        })
+
       setPersons(persons.concat(personObject))
       setNewName('')
       setNewNumber('')
@@ -101,23 +122,23 @@ const App = () => {
 
   }
 
-  const deleteHandle  = (id) => {
+  const deleteHandle = (id) => {
 
     //unique url based on the id
     const url = `http://localhost:3001/persons/${id}`
-    console.log("url is ",url)
+    console.log("url is ", url)
     //find the person we want to delete
     const personToDelete = persons.find(p => p.id == id)
 
     //window.confirm, do you want to delete this person? 
-    console.log("id " ,id)
-    
+    console.log("id ", id)
+
     if
-    (window.confirm(`Do you want to delete ${[personToDelete.name]}`) ) {
-        axios.delete(url,personToDelete) //no data sent back
+      (window.confirm(`Do you want to delete ${[personToDelete.name]}`)) {
+      axios.delete(url, personToDelete) //no data sent back
 
       window.open("deleted")
-      
+
     }
 
   }
@@ -156,10 +177,10 @@ const App = () => {
 
 
       {phoneBookToShow.map(per =>
-        <Display key={per.id} 
-        name={per.name} 
-        number={per.number} 
-        deleteHandle =  {() => deleteHandle(per.id)}
+        <Display key={per.id}
+          name={per.name}
+          number={per.number}
+          deleteHandle={() => deleteHandle(per.id)}
         />
 
       )}
