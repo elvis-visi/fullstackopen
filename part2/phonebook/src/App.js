@@ -18,7 +18,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   //search field
   const [filterByName, setNewFilter] = useState('')
-  const [idPerson, setNewId] = useState(persons.length + 1)
+
 
 
   const handleNameFilter = (event) => {
@@ -55,7 +55,6 @@ const App = () => {
   //event parameter is the event that triggers the call to the event handler
   //function
 
-  useEffect(() => { setNewId(persons.length + 1) })
 
   const addPerson = (event) => {
     console.group("event", event.target) //the form
@@ -66,25 +65,18 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: idPerson
-      //id: 
     }
 
     //if personObjec is already in the array, alert()
     let isDuplicate = false
 
-    //compare the name and number only, ingore the id
-    const personCompare = persons.map(function (per) {
-      return per.name + per.number
-    })
+  
 
-    console.log("comparison", personCompare)
-
-    for (let i = 0; i < personCompare.length; i++) {
+    for (let i = 0; i < persons.length; i++) {
       const obj = personObject.name + personObject.number
       //
 
-      if (JSON.stringify(obj) === JSON.stringify(personCompare[i])) {
+      if (JSON.stringify(obj) === JSON.stringify(persons[i])) {
         alert(`${newName} - ${newNumber} is already added to phonebook`)
         isDuplicate = true
         setNewName('')
@@ -106,6 +98,14 @@ const App = () => {
       setNewName('')
       setNewNumber('')
     }
+
+  }
+
+  const deleteHandle  = (idPass) => {
+
+    //window.confirm, do you want to delete this person? 
+
+    window.confirm("Do you want to delete ")
 
   }
 
@@ -143,7 +143,10 @@ const App = () => {
 
 
       {phoneBookToShow.map(per =>
-        <Display key={per.id} name={per.name} number={per.number} />
+        <Display key={per.id} 
+        name={per.name} 
+        number={per.number} 
+        />
 
       )}
 

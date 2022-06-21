@@ -13,6 +13,10 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
+const deletePerson = () => {
+    
+}
+
 export default {
     getAll,
     create
