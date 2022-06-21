@@ -101,11 +101,24 @@ const App = () => {
 
   }
 
-  const deleteHandle  = (idPass) => {
+  const deleteHandle  = (id) => {
+
+    //unique url based on the id
+    const url = `http://localhost:3001/persons/${id}`
+    console.log("url is ",url)
+    //find the person we want to delete
+    const personToDelete = persons.find(p => p.id == id)
 
     //window.confirm, do you want to delete this person? 
+    console.log("id " ,id)
+    
+    if
+    (window.confirm(`Do you want to delete ${[personToDelete.name]}`) ) {
+        axios.delete(url,personToDelete) //no data sent back
 
-    window.confirm("Do you want to delete ")
+      window.open("deleted")
+      
+    }
 
   }
 
@@ -146,6 +159,7 @@ const App = () => {
         <Display key={per.id} 
         name={per.name} 
         number={per.number} 
+        deleteHandle =  {() => deleteHandle(per.id)}
         />
 
       )}
