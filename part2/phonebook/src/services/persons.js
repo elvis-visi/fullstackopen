@@ -13,8 +13,8 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-const deletePerson = () => {
-
+const deletePerson = (id) => {
+  return axios.delete(`${baseUrl}/${id}`)
 }
 
 

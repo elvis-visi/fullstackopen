@@ -34,27 +34,27 @@ const App = () => {
   //search field
   const [filterByName, setNewFilter] = useState('')
 
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState(null)
+
+  const notify = (message, type = 'info') => {
+    setMessage({message,type})
+    setTimeout(() => {
+      setMessage(null)
+    },3000)
+  }
 
 
-
+ //filter based on search
   const handleNameFilter = (event) => {
-    console.log("event target value", event.target.value)
+    console.log("filter value", event.target.value)
     setNewFilter(event.target.value)
   }
-
-  const peopleToShow = persons.filter(per => per.name.toLocaleLowerCase().includes(filterByName.toLowerCase()))
+ //if no filter show the fetched people at the beginning
+ //else, show those which correspond to the filter
+  const peopleToShow = (filterByName.length === 0 ) ? persons :
+  persons.filter(per => per.name.toLocaleLowerCase().includes(filterByName.toLowerCase()))
   console.log("people to show", peopleToShow)
 
-  //if filterByName 
-  let phoneBookToShow
-
-  if (filterByName.length != 0 && peopleToShow.length != 0) {
-    phoneBookToShow = peopleToShow
-
-  } else {
-    phoneBookToShow = persons
-  }
 
 
   //fetch persons users
@@ -112,10 +112,10 @@ const App = () => {
               setPersons(persons.map(per => per.id !== idPer ? per : response.data))
             })
             .catch(error => {
-              alert(
+              
   
-           `the note '${persons[i].name}' was already deleted from server`
-              )
+                setMessage(`the note '${persons[i].name}' was already deleted from server`)
+          
             })
 
           setMessage(` Number ${personObject.number} added`)
@@ -208,14 +208,13 @@ const App = () => {
       <h1>Numbers</h1>
 
 
-      {phoneBookToShow.map(per =>
-        <Display key={per.id}
-          name={per.name}
-          number={per.number}
-          deleteHandle={() => deleteHandle(per.id)}
+     
+        <Display 
+          persons = {peopleToShow}
+          deleteHandle={deleteHandle}
         />
 
-      )}
+      
 
     </div>
 
