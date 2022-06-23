@@ -69,6 +69,47 @@ app.get('/api/persons', (request, response) => {
 
   })
 
+  const generateId = () => {
+      const id = 
+      Math.floor(Math.random() * 1000000);
+
+      return id;
+  }
+//content property may not be empty
+  app.post('/api/persons',(request, response) => {
+   
+    const body = request.body
+    console.log("body: ", body)
+    
+    //if eithere the name or number is missing
+    if(!body.name || !body.number)
+    {
+        return response.status(400).json({ 
+            error: 'content missing' 
+          })
+    }
+    else if(persons.find(p => p.name === body.name))
+    {
+        return response.status(400).json({
+            error: 'name must be unique '
+        })
+    }
+    else
+    {
+        const person = {
+            id : generateId(),
+            name : body.name,
+            number: body.number
+            
+        }
+    
+        persons = persons.concat(person)
+        response.json([person])
+    }
+
+  
+  })
+
 
 
 const PORT = 3001
