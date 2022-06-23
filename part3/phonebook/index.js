@@ -27,6 +27,8 @@ let persons = [
     }
 ]
 
+app.use(express.json())
+
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
   })
@@ -35,6 +37,14 @@ app.get('/api/persons', (request, response) => {
     response.json(persons)
   })
 
+
+  app.get('/api/info', (request, response) => {
+   
+    let date =  new Date()
+    const info = `Phonebook has info for ${persons.length} people <br><br> ${date}`
+    
+    response.send(info)
+  })
 
 
 
