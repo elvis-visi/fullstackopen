@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+const morgan = require('morgan')
+
 
 console.log('hello world')
 
@@ -27,7 +29,38 @@ let persons = [
     }
 ]
 
+//json-parser takes raw data from the requests that is stored in the 
+//request object
+//parses it into a JS object and assigns it to the request object as a new
+//property body
 app.use(express.json())
+
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+//app.use(requestLogger)
+
+app.use(morgan('tiny'))
+
+morgan.token('post', function (req, res) 
+{ 
+  if(req.method === 'POST')
+  {
+    return JSON.stringify(req.body)
+  }
+  
+  else
+  return ''
+
+})
+
+
+
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
