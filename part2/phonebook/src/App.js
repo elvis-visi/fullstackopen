@@ -2,47 +2,23 @@ import { useEffect, useState } from 'react'
 import Person from './components/Person'
 import Filter from './components/Filter'
 import Display from './components/Display'
-import axios from 'axios'
-
+import Notification from './components/Notification.js'
 import personService from './services/persons'
-
-
-const Notification = ({ message }) => {
-  //if null nothing gets rendered to the screen
-  if (message === null) {
-    return null
-  }
-
-  return (
-    <div className='message'>
-      {message}
-    </div>
-  )
-}
-
 
 const App = () => {
 
-
-
-  //persons -> where we will store the names of the phonebook
   const [persons, setPersons] = useState([])
-  //newName to control the form input element
-  //we wil set it as the input element's value attribute:
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  //search field
   const [filterByName, setNewFilter] = useState('')
+  const [notification, setNotification] = useState(null)
 
-  const [message, setMessage] = useState(null)
-
-  const notify = (message, type = 'info') => {
-    setMessage({message,type})
+  const notify = (message, type='info') => {
+    setNotification({ message, type })
     setTimeout(() => {
-      setMessage(null)
-    },3000)
+      setNotification(null)
+    }, 3000)
   }
-
 
  //filter based on search
   const handleNameFilter = (event) => {
@@ -74,101 +50,73 @@ const App = () => {
 
 
   const addPerson = (event) => {
-    event.preventDefault() //prevent default action of submitting HTML forms
-    //add new note
-    const personObject = {
-      name: newName,
-      number: newNumber,
-    }
-    //if personObjec is already in the array, alert()
-    let isDuplicate = false
-    for (let i = 0; i < persons.length; i++) {
-      const obj = personObject.name + personObject.number
-      //
-      if (JSON.stringify(obj) === JSON.stringify(persons[i])) {
-        alert(`${newName} - ${newNumber} is already added to phonebook`)
-        isDuplicate = true
-        setNewName('')
-        setNewNumber('')
-        break
-      }
-      //if only the name is the same
-      else if (personObject.name === persons[i].name) {
-
-
-        isDuplicate = true
-        if (window.confirm(`${persons[i].name} is already in the phonebook
-        ,replace the old number with the new one?`)) {
-          window.open("Number updated")
-          //update
-          const idPer = persons[i].id
-          const url = `http://localhost:3001/persons/${idPer}`
-          const person = persons.find(n => n.id === idPer)
-
-          const numberChange = { ...person, number: personObject.number }
-
-          axios.put(url, numberChange)
-            .then(response => {
-              setPersons(persons.map(per => per.id !== idPer ? per : response.data))
-            })
-            .catch(error => {
-              
   
-                setMessage(`the note '${persons[i].name}' was already deleted from server`)
-          
-            })
-
-          setMessage(` Number ${personObject.number} added`)
-          setTimeout(() => {
-            setMessage(null)
-          }, 4000)
-
-
-
-
-        }
-
-
-      }
+    event.preventDefault()
+    const newPerson = {
+      name: newName,
+      number: newNumber
     }
+    setNewName('')
+    setNewNumber('')
 
-    if (!isDuplicate) {
+    //check whether the name you are trying to add is a duplicate
+    const existingPerson = persons.find(p => p.name === newPerson.name)
+    let duplicate = false
+    //if it exists, ask whether we want to update the number. window()
+    if(existingPerson)
+    {
+      const ok = window.confirm(`${existingPerson.name} is already added to phonebook, update the number?`)
+      duplicate = true
+      //update
+      if(ok){
+        
+        personService.update(existingPerson.id, {...existingPerson, number: newNumber})
+        .then(savedPerson => {
+          setPersons(persons.map(p => p.id === existingPerson.id ? savedPerson : p))
+          notify(`Updated info of ${savedPerson.name}`)
+        })
+        .catch(error => {
+          notify(
+            `the person '${existingPerson.name}' was had already been from the server`, 'alert'
+          )
+          setPersons(persons.filter(p => p.id !== existingPerson.id))
+        })
+        return
+        
+      }
+     
+        
+      }
 
-      //if name is the same, but number is not, then update the number
-      //create service 
-      personService
-        .create(personObject)
-        .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
+      if(!duplicate)
+      {
+        personService.create(newPerson).then(savedPerson => {
+          setPersons(persons.concat(savedPerson))
+          notify(`Added ${savedPerson.name}`)
         })
 
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
-      setMessage(` ${personObject.name} added`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000)
-    }
+      }
+
+      
+    
 
   }
 
   const deleteHandle = (id) => {
 
-    //unique url based on the id
-    const url = `http://localhost:3001/persons/${id}`
-    console.log("url is ", url)
     //find the person we want to delete
-    const personToDelete = persons.find(p => p.id == id)
+    const personToDelete = persons.find(p => p.id === id)
 
     //window.confirm, do you want to delete this person? 
     console.log("id ", id)
 
     if
       (window.confirm(`Do you want to delete ${[personToDelete.name]}`)) {
-      axios.delete(url, personToDelete) //no data sent back
-
-      window.open("deleted")
+      personService.remove(id).then(()=>{
+        setPersons(persons.filter(p => p.id !== id))
+        //notify
+        notify(`Deleted ${personToDelete.name}`)
+      })
 
     }
 
@@ -195,27 +143,23 @@ const App = () => {
 
     <div>
       <h1>Phonebook</h1>
-      <Notification message={message} />
-      <Filter filterByName={filterByName}
+      <Notification notification={notification} />
+      <Filter 
+      filterByName={filterByName}
         handleNameFilter={handleNameFilter} />
 
-      <Person addPerson={addPerson}
+      <Person 
+      addPerson={addPerson}
         newName={newName}
         handleNameChange={handleNameChange}
         newNumber={newNumber}
         handleNumberChange={handleNumberChange}
       />
       <h1>Numbers</h1>
-
-
-     
         <Display 
           persons = {peopleToShow}
           deleteHandle={deleteHandle}
         />
-
-      
-
     </div>
 
   )

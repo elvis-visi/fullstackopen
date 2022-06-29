@@ -6,20 +6,18 @@ const Display = ({ persons, deleteHandle }) => {
     //add a onClick event, wiil be passed as a param above
     //on click call delete, with id of the person -> delete their URL/id
     <>
-      {
-        persons.map(person =>
-          <p key={person.id}>
-            {person.name} {person.number}
-            <button onClick={() => deleteHandle(person.id)}>
+      {persons.map(person =>
+        <p key={person.id}>
+          {person.name} {person.number}
+          <button onClick={() => deleteHandle(person.id)}>
 
-              delete
+            delete
 
-            </button>
+          </button>
 
-          </p>
+        </p>
 
-        )
-      }
+      )}
     </>
   )
 
