@@ -8,6 +8,32 @@ const cors = require('cors')
 app.use(cors())
 
 
+//mongoose
+const mongoose = require('mongoose')
+
+const url = `mongodb+srv://fullstack:fullstack@cluster0.idihi.mongodb.net/phoneBookApp?retryWrites=true&w=majority`
+
+mongoose.connect(url)
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String
+
+})
+
+personSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+const Person = mongoose.model('Person',personSchema)
+
+
+
+
 console.log('hello world')
 
 let persons = [
@@ -73,7 +99,11 @@ app.get('/', (request, response) => {
   })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+   
+  Person.find({}).then(person => {
+    response.json(person)
+  })
+
   })
 
 
