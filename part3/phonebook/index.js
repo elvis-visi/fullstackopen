@@ -2,20 +2,30 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-
 require('dotenv').config()
 
  //importing the model
  const Person = require('./models/person')
 
-
- 
-
 const morgan = require('morgan')
 
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
 
+app.use(express.json())
+
+app.use(requestLogger)
 
 app.use(cors())
+
+app.use(express.static('build'))
+
+
 
 
 /*mongoose
@@ -74,17 +84,6 @@ let persons = [
 //request object
 //parses it into a JS object and assigns it to the request object as a new
 //property body
-app.use(express.json())
-
-app.use(express.static('build'))
-
-const requestLogger = (request, response, next) => {
-  console.log('Method:', request.method)
-  console.log('Path:  ', request.path)
-  console.log('Body:  ', request.body)
-  console.log('---')
-  next()
-}
 
 //app.use(requestLogger)
 
@@ -127,19 +126,42 @@ app.get('/api/persons', (request, response) => {
   })
 
   //fetch single resource
-  app.get('/api/persons/:id' , (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(p => p.id === id)
-
-    if(person)
-    {
+  app.get('/api/persons/:id' , (request, response, next) => {
+  
+    Person.findById(request.params.id)
+    .then(person => {
+      if(person)
+      {
         response.json(person)
-    }else{
+      }else{
         response.status(404).end()
-    }
-
+      }
+    })
+    .catch(error => next(error))
+    //error given to the next function as a parameter
    
   })
+
+
+  const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+  }
+
+  // handler of requests with unknown endpoint
+//app.use(unknownEndpoint)
+
+  const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if(error.name === 'CastError'){
+      return response.status(400).send({ error: 'malformatted id' })
+    }
+
+
+    next(error)
+  }
+
+  
 
   app.delete('/api/persons/:id',(request, response) =>{
     const id = Number(request.params.id)
@@ -185,7 +207,7 @@ app.get('/api/persons', (request, response) => {
   
   })
 
-
+  app.use(errorHandler)
 
   const PORT = process.env.PORT || 3001
   app.listen(PORT, () => {
