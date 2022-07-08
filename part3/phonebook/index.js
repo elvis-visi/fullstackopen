@@ -1,17 +1,27 @@
+
 const express = require('express')
 const app = express()
+const cors = require('cors')
+
+require('dotenv').config()
+
+ //importing the model
+ const Person = require('./models/person')
+
+
+ 
 
 const morgan = require('morgan')
 
-const cors = require('cors')
+
 
 app.use(cors())
 
 
-//mongoose
-const mongoose = require('mongoose')
+/*mongoose
+//const mongoose = require('mongoose')
 
-const url = `mongodb+srv://fullstack:fullstack@cluster0.idihi.mongodb.net/phoneBookApp?retryWrites=true&w=majority`
+//const url = `mongodb+srv://fullstack:fullstack@cluster0.idihi.mongodb.net/phoneBookApp?retryWrites=true&w=majority`
 
 mongoose.connect(url)
 
@@ -31,6 +41,7 @@ personSchema.set('toJSON', {
 
 const Person = mongoose.model('Person',personSchema)
 
+*/
 
 
 
@@ -157,30 +168,26 @@ app.get('/api/persons', (request, response) => {
             error: 'content missing' 
           })
     }
-    else if(persons.find(p => p.name === body.name))
-    {
-        return response.status(400).json({
-            error: 'name must be unique '
-        })
-    }
-    else
-    {
-        const person = {
-            id : generateId(),
-            name : body.name,
-            number: body.number
-            
-        }
-    
-        persons = persons.concat(person)
-        response.json([person])
-    }
+   
+  
+    const person = new Person({
+
+      name: body.name,
+      number : body.number
+
+    })
+
+
+    person.save().then(savedPerson => {
+      response.json(savedPerson)
+    })
 
   
   })
 
 
 
-const PORT = process.env.PORT || 3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+  const PORT = process.env.PORT || 3001
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
