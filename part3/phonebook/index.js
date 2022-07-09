@@ -161,6 +161,28 @@ app.get('/api/persons', (request, response) => {
     next(error)
   }
 
+
+  app.put('/api/persons/:id',(request, response, next) => 
+  {
+
+    const body  = request.body
+
+    const person = {
+
+      name: body.name,
+      number : body.number
+
+    }
+
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
+
+
+  } )
+
   
 
   app.delete('/api/persons/:id',(request, response) =>{
@@ -200,6 +222,9 @@ app.get('/api/persons', (request, response) => {
       number : body.number
 
     })
+
+    // if duplicate name then choice to update or not
+
 
 
     person.save().then(savedPerson => {
