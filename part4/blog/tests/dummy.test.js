@@ -81,3 +81,27 @@ describe('total likes', () => {
   })
 
 })
+
+describe('most likes', () => {
+  test('of empty list is zero', () => {
+    const blogs = []
+    expect(listHelper.favoriteBlog(blogs)).toEqual({})
+  })
+
+  test('when list has only one blogs equals the likes of that', () => {
+    expect(listHelper.favoriteBlog(blogs.splice(0,1))).toEqual(
+      {
+        _id: '5a422a851b54a676234d17f7',
+        title: 'React patterns',
+        author: 'Michael Chan',
+        url: 'https://reactpatterns.com/',
+        likes: 7,
+        __v: 0
+      }
+    )
+  })
+
+  test(`most liked blog when more than 1 blog in list, most : ${blogs[2].likes}`, () => {
+    expect(listHelper.favoriteBlog(blogs)).toEqual(blogs[1])
+  })
+})

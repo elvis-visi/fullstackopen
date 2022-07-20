@@ -14,7 +14,18 @@ const totalLikes = (blogs) => {
 
 }
 
+//which blog has the most likes, toEqual to compare objects, compares all properties
+const favoriteBlog = (blogs) => {
+
+  if(blogs.length === 0)
+    return {}
+  return blogs.reduce((max, blog) => max.likes > blog.likes ? max : blog)
+
+
+}
+
+
 
 module.exports = {
-  dummy, totalLikes
+  dummy, totalLikes, favoriteBlog
 }
