@@ -2,6 +2,7 @@ const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 
 const User = require('../models/user') 
+const jwt = require('jsonwebtoken')
 
 
 blogRouter.get('/', async (request, response) => {
@@ -45,21 +46,11 @@ blogRouter.put('/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-const jwt = require('jsonwebtoken')
-//helper function to isolate the token from the authorization header
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
 
 
 blogRouter.post('/', async (request, response, next) => {
   const body = request.body
-  const token = getTokenFrom(request) //which is a string
-  //check the validity of the token using jwt.verify
+  const token = request.token
   const decodedToken = jwt.verify(token, process.env.SECRET)
   //object decoded contains username and id, tells server who made the request
   if (!decodedToken.id) {
