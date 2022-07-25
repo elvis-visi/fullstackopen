@@ -1,33 +1,55 @@
-//receive and empty array of blogs and rerturn 1
-const dummy = (blogs) => {
+const _ = require('lodash')
+const dummy = (blogs) => 1
 
-  return 1
-}
-
-
-//return the total sum of the likes in all the blog posts
 const totalLikes = (blogs) => {
-  if(blogs.length === 0)
+  if ( blogs.length === 0) {
     return 0
-
-  return blogs.reduce((sum,blog) => sum += blog.likes,0)
-
+  }
+  
+  return blogs.reduce((sum, b) => sum + b.likes,0)
 }
 
-//which blog has the most likes, toEqual to compare objects, compares all properties
-const favoriteBlog = (blogs) => {
+const favoriteBlogs = (blogs) => {
+  if ( blogs.length === 0) {
+    return undefined
+  }
 
-  if(blogs.length === 0)
-    return {}
-  return blogs.reduce((max, blog) => max.likes > blog.likes ? max : blog)
-
-
+  return blogs.sort((a, b) => b.likes - a.likes )[0]
 }
 
-//mostBlogs return the author with most blogs,  author , blogs number
+const mostBlogs = (blogs) => {
+  if ( blogs.length === 0) {
+    return undefined
+  }
+
+  const byAuthor = _.groupBy(blogs, (b) => b.author)
+  const likeCounts = Object.keys(byAuthor).map(name => {
+    return {
+      name,
+      blogs: byAuthor[name].length
+    }
+  })
+
+  return likeCounts.sort((a, b) => b.blogs - a.blogs )[0].name
+}
+
+const mostLikes = (blogs) => {
+  if ( blogs.length === 0) {
+    return undefined
+  }
+
+  const byAuthor = _.groupBy(blogs, (b) => b.author)
+  const likeCounts = Object.keys(byAuthor).map(name => {
+    return {
+      name,
+      likes: byAuthor[name].reduce((s, b) => s + b.likes, 0)
+    }
+  })
 
 
+  return likeCounts.sort((a, b) => b.likes - a.likes )[0].name
+}
 
 module.exports = {
-  dummy, totalLikes, favoriteBlog
+  dummy, totalLikes, favoriteBlogs, mostBlogs, mostLikes
 }
